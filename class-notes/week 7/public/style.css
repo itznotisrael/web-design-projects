@@ -1,0 +1,11 @@
+body {
+    background-color: royalblue;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    font-size: 30px;
+    margin-bottom: 20px;
+}
