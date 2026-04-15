@@ -18,9 +18,9 @@
       </form>
     <div class="all-posts">
       <!-- add the variable in response.render) -->
-        {% for post in response.render('index.njk', { data: docs }); %}
+        {% for post in sendingToClient %}
         {# what is the difference between {%%} and {{ }} ? #}
-        {# A: {%%} Used for 'loops, if statements,' {{ }} Used for 'Variables on the page'#}
+        {# A: {%%}: for 'loops, if statements,' {{ }}: for 'Variables on the page' #}
             <div class='single-post'>
                 <span> {{post.date}} </span>
                 <a href="/post/{{post._id}}"><img src='{{post.image}}'></a>

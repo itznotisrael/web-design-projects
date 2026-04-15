@@ -1,5 +1,5 @@
 // how do we know this is a npm project?
-// A: It uses 'require'
+// A: It uses 'package.json' file
 
 // what command do we run to start an npm project?
 // A: 'npm init'
@@ -13,6 +13,8 @@
 		'multer' : file uploads
 		'nunjucks' : template the engines
 		'nedb' : database
+
+		Simple Terms: Import the libraries/packages
 */
 const express = require('express');
 const multer = require('multer');
@@ -23,41 +25,43 @@ const nedb = require('@seald-io/nedb');
 // A: An express application uses for web servers
 const app = express();
 // what is database?
-// A: It's used to store data within a file when starting the server
+// A: It's used to store data within a 'data.db' file when starting the server
 const database = new nedb({ filename: 'data.db', autoload: true });
 
 // what is this configuring?
-// A: It uploads files using 'Multer'
+// A: It creates the public folder using 'Multer'.
 const upload = multer({
 	dest: 'public/uploads',
 });
 
 // what do each of these statements do?
 // write the answer next to the line of code
-app.use(express.static('public')); // A: Holds static files within the 'public' folder
-app.use(express.urlencoded({ extended: true })); // A: Note Sure
+app.use(express.static('public')); // A: It allows express to expose those files within the 'public' folder
+app.use(express.urlencoded({ extended: true })); /* A: 
+Accept all types of input. 
+Allow us to use request.body and read all the request data from the client
+*/
 app.set('view engine', 'njk'); // A: Sets view engines as njk file.
 nunjucks.configure('views', {
 	autoescape: true,
 	express: app,
-}); // A: Not sure
+}); // A: Connects nunjucks files to express server and puts into views folder
 
 // what type of request is this? what does it do?
-// A: A 'Get' request. It gets the information from the homepage
+// A: A 'Get' request. It gets the information from the homepage/'/', or whatever input route chosen
 app.get('/', (request, response) => {
 	// how many different responses can we write? list them.
-	// A: response.send(), response.render(), response.redirect(), response.json()
+	// A: response.send(), response.render(), response.redirect(), response.json(), response.sendFile()
 	// how many parameters does response.render use? list them.
-	// A: Not sure
-	/* write out the render for index.njk using the database: 
-	database.find({}, (err, docs) => {
-		response.render('index.njk', { data: docs });
+	// A: 2 Files: Name and Title
+	/* write out the render for index.njk using the database: */
+	database.find({}, (sendingToClient, foundData) => {
+		response.render('index.njk', { sendingToClient: foundData });
 	});
-	*/
 });
 
 // what are the three parameters in this function?
-// A: '/upload', req, and res
+// A: route '/upload', response 'req, res', and upload.single 
 app.post('/upload', upload.single('theimage'), (req, res) => {
 	let currentDate = new Date();
 
@@ -70,22 +74,22 @@ app.post('/upload', upload.single('theimage'), (req, res) => {
 	};
 
 	// why do we write this if statement?
-	// A: To check if a file was uploaded, preventing errors
+	// A: To check if a file exist.
 	if (req.file) {
 		data.image = '/uploads/' + req.file.filename;
 	}
 
 	// what does the insert function do?
-	// A: It adds (stores) a new object into the database.
-	database.insert(dataToBeStored);
+	// A: It adds data into the database.
+	database.insert(data);
 
-	resopnse.redirect('/');
+	res.redirect('/');
 });
 
 // what does the number signify?
-// A: 6001
+// A: 6001/Port Number
 // how do we access this on the web?
-// A: http://localhost:6001
+// A: http://localhost:6001 / http://127.0.0.1:6001
 app.listen(6001, () => {
 	console.log('server started on port 6001');
 });
